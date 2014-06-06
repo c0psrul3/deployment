@@ -14,6 +14,11 @@ Files worth mentioning
    system with your username.  If one is not provided, this value will be asked
    for during launch of the cli.
 
+## Requirements ##
+------------------------------------------------------------------------------
+ * shyaml  - this is a required program for (bash) commandline yaml parsing
+      see : https://github.com/0k/shyaml
+
 
 ## Example Configuration File ##
 ------------------------------------------------------------------------------

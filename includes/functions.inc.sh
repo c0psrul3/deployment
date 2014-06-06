@@ -66,7 +66,7 @@ function countdown() {
   echo ""
   until [ $COUNTER == 0 ] ; do
     echo -ne '\r'
-    echo -ne "$COUNTER"
+    echo -ne "$COUNTER"; sleep 1
     let COUNTER-=1
   done
 }

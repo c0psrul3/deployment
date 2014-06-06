@@ -1,0 +1,155 @@
+#!/bin/bash
+
+source includes/functions.inc.sh
+
+# get the 'username' of the user running program and start log file, if not provided by environment variable
+[ -z $DEPLOYUSERNAME ] && getInput DEPLOYUSERNAME 'Please, state your name for the record: '
+if [ "$DEPLOYUSERNAME" == "" ] ; then
+ echo "No value for user running deploy script. Exiting..."
+ exit 2
+fi
+
+## startup control file and logging
+RUNDIR="${HOME}/.deployment"
+mkdir -p "$RUNDIR"
+declare -r PID="$$"
+declare -xr LOGFILE="${RUNDIR}/`date +%s`.log"
+CONFIGDIR="`pwd`/config/"
+
+log "started program with pid:${PID}" notice
+
+# be sure to clean up after ourselves !
+trap 'log "exited gracefully"; savelog; /bin/rm $LOGFILE' EXIT
+trap 'log "HUP"; backtoMainMenu' SIGHUP
+trap 'log "received interrupt signal"; exit' SIGINT # ctrl+C
+trap 'log "received term signal."; exit' SIGTERM # (kill)
+
+# clear the screen and start fresh
+function viewHelp {
+declare -A selectList
+selectList["Deploy"]="Use to deploy code from a git repository."
+#selectList["Configure"]="Configure something, i guess..."
+#selectList["Database"]="Manage various databases."
+#selectList["Shell"]="Drop to a shell on a deployed server."
+#selectList["Access"]="Get access to a particular server."
+selectList["Choose"]="...your own adventure\!"
+selectList["Review"]="Review action taken, in this session, thusfar."
+selectList["Exit"]="Cowardly leave, accomplishing nothing."
+#$selectList["%%cmd%%"]="%%text%%"
+  echo -e "\e[1m  Welcome to Benchmark Education Deployment Server!!!!1\e[0m"
+  echo "      Command and Control Center  (( CCC-APP ))"
+
+  for _item in "${!selectList[@]}" ; do
+    echo -e "\n\e[33m ${_item}\e[0m"
+    echo -e "\t${selectList[$_item]}"
+  done
+
+  echo ""
+}
+
+#########################################
+# MainMenu Selection                    #
+#   print shell-like request            #
+#########################################
+function chooseMainMenu {
+  printf "# > "
+  # read-in user selection
+  local INPUT=""
+  local __result=$1
+  while read INPUT ; do
+    ###TODO: check permissions of user
+    case $INPUT in
+      exit | quit | q )
+        log "has quit"
+        printf "Quitting."; pinwheel; exit 3
+        ;;
+      [rR]eview )
+        clear; log "reviewed the session"
+        less $LOGFILE
+        echo "Resetting..."; pinwheel; backtoMainMenu
+        ;;
+      [dD]eploy )
+        clear; log "entered Deploy menu"
+        echo -e "\e[1m\n Please choose from the following list"
+        echo -e "       of available repositories \e[0m\n"
+        
+        #TODO: 1) re-arrange deployment to list the available repo's (found in /opt/git/)
+        #TODO: 2) determine branch to use for deployment, 
+        #TODO: 3) then, LAST, find the YAML file in the root of that repo, selectEnvironment() from there,
+
+        # get repo selection from user and write to our log file
+        selectRepository REPOSITORY
+        log "chose repository: ${REPOSITORY}"
+        # get environment selection from user and write to our log file
+        selectEnvironment ENVIRONMENT
+        log "chose environment: ${ENVIRONMENT}"
+        # get branch selection from user and write to our log file
+        getInput BRANCH " Please provide the branch name you want to use: "
+        log "chose branch: ${BRANCH}"
+        areyousure "you want to use branch \"${BRANCH}\""
+        entertocontinue
+        echo -e "  ...Running deployment with: "
+        echo -e "\tRepository:  ${REPOSITORY}"
+        echo -e "\tEnvironment: ${ENVIRONMENT}"
+        echo -e "\tBranch:      ${BRANCH}"
+        pinwheel 3
+        bash deploy.sh "${REPOSITORY}" "${ENVIRONMENT}" "${BRANCH}"
+        backtoMainMenu "Finished deployment of Repo: ${REPOSITORY}, Branch: ${BRANCH}, Environment: ${ENVIRONMENT}"
+        ;;
+      [cC]onfigure )
+        clear; log "entered Configure menu"
+        echo -e "\e[1m\n What is it, exactly, you would like to configure?"
+        echo "not yet available"
+        pinwheel 3
+        backtoMainMenu
+        ;;
+      [dD]atabase )
+        clear; log "entered Database menu"
+        echo -e "\e[96m\n Wanda\e[0m (the fish) wonders..."
+        echo -e "\tIs \e[7mMongo\e[0m really a Database?"
+        pinwheel 3
+        backtoMainMenu
+        ;;
+      [cC]hoose )  ## stupid thing to display a train
+        clear;
+        sl -a
+        backtoMainMenu
+        ;;
+      [sS]hell )
+        clear; log "entered Shell menu"
+        getInstanceList
+        screen -R ${DEPLOYUSERNAME}
+        backtoMainMenu
+        ;;
+      [aA]ccess )
+        clear; log "entered Access menu"
+        #TODO: provide facilities for adding users and inserting keys to particular servers
+        backtoMainMenu
+        ;;
+      * )
+        # display error message in RED
+        backtoMainMenu "Command [ $INPUT ] not found or invalid."
+        ;;
+    esac
+  done
+}
+
+function backtoMainMenu {
+  clear
+  viewHelp
+  if [ ! -z "$1" ] ; then
+    echo -e "\e[96m$1\e[0m\n"
+  fi
+  chooseMainMenu
+}
+
+##  Start the program!!!!1
+if [ ! -f $LOGFILE ] ; then
+  echo ""
+  echo "Could not create temporary file.  Please tell your System Administrator"
+  exit 255;
+else
+  # and away we go...
+  backtoMainMenu
+fi
+exit 0

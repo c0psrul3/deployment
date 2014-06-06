@@ -1,0 +1,11 @@
+name: "myname"
+subvalue:
+  another: soemthing
+  another2: 2.0
+  another3: 1.1
+  things:
+    - first
+    - second
+    - third
+  description:
+subvalue:another: 1.0

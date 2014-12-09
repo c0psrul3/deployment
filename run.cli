@@ -36,7 +36,7 @@ selectList["Choose"]="...your own adventure\!"
 selectList["Review"]="Review action taken, in this session, thusfar."
 selectList["Exit"]="Cowardly leave, accomplishing nothing."
 #$selectList["%%cmd%%"]="%%text%%"
-  echo -e "\e[1m  Welcome to Benchmark Education Deployment Server!!!!1\e[0m"
+  echo -e "\e[1m  Welcome to the Deployment Server!!!!1\e[0m"
   echo "      Command and Control Center  (( CCC-APP ))"
 
   for _item in "${!selectList[@]}" ; do

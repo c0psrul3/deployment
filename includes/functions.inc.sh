@@ -279,7 +279,7 @@ function yaml() {
 #  awk -F ": " '{for (i=0;i<=NF;i++){printf $1 "\"]=\""$2"\""}')
 #  awk '{for(i=2;i<=NF;i++){printf "%s ", $i}; printf "\n"}'
 #  rm $YAMLTEMP
-#OLD# sed -e 's/:[^:\/\/]/="/g;s/$/"/g;s/ *=/=/g' config/benchmark_web_service.yaml 
+#OLD# sed -e 's/:[^:\/\/]/="/g;s/$/"/g;s/ *=/=/g' config/web_service.yaml 
 }
 
 # Function:

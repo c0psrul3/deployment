@@ -39,7 +39,7 @@ function showusage {
   To see full list of options, use option "-h".
     For Example:
                  ./deploy-yaml.sh -e staging dppo-lms.lms  
-      -or-       ./deploy-yaml.sh benchmark_web_service staging
+      -or-       ./deploy-yaml.sh web_service staging
 EOF
 }
 
@@ -63,7 +63,7 @@ function showhelp {
 
     For Example:
                  ./deploy-yaml.sh -e staging dppo-lms.lms  
-      -or-       ./deploy-yaml.sh benchmark_web_service staging
+      -or-       ./deploy-yaml.sh web_service staging
 
 EOF
 exit

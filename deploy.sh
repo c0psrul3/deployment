@@ -200,7 +200,6 @@ for ENV in ${deployment['Environment']} Default ; do
           VALUE=`yaml get-value Environment.${ENV}.${FILE}.${KEY}`
           VALUE=`echo ${VALUE} | sed --expression="s#{ENVIRONMENT}#${deployment['Environment']}#g"`
   #TODO: validate AWS keys in MongoDB
-  #TODO: validate BWS keys in MongoDB
           echo -en "${ENV} - Replacing \"${KEY}\" in ${FILE}"
           replaceToken "%%${KEY}%%" "${VALUE}" "${_FILE}" && echo -e "\t\t[ \e[92mOK\e[0m ]" || echo -e "\t\t[ \e[31mFAILED\e[0m ]" 
           ;;

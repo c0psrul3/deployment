@@ -39,7 +39,7 @@ function showusage {
   To see full list of options, use option "-h".
     For Example:
                  ./deploy-yaml.sh -e staging dppo-lms.lms  
-      -or-       ./deploy-yaml.sh benchmark_web_service staging
+      -or-       ./deploy-yaml.sh web_service staging
 EOF
 }
 
@@ -63,7 +63,7 @@ function showhelp {
 
     For Example:
                  ./deploy-yaml.sh -e staging dppo-lms.lms  
-      -or-       ./deploy-yaml.sh benchmark_web_service staging
+      -or-       ./deploy-yaml.sh web_service staging
 
 EOF
 exit
@@ -200,7 +200,6 @@ for ENV in ${deployment['Environment']} Default ; do
           VALUE=`yaml get-value Environment.${ENV}.${FILE}.${KEY}`
           VALUE=`echo ${VALUE} | sed --expression="s#{ENVIRONMENT}#${deployment['Environment']}#g"`
   #TODO: validate AWS keys in MongoDB
-  #TODO: validate BWS keys in MongoDB
           echo -en "${ENV} - Replacing \"${KEY}\" in ${FILE}"
           replaceToken "%%${KEY}%%" "${VALUE}" "${_FILE}" && echo -e "\t\t[ \e[92mOK\e[0m ]" || echo -e "\t\t[ \e[31mFAILED\e[0m ]" 
           ;;
